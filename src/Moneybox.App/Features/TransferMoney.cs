@@ -20,36 +20,30 @@ namespace Moneybox.App.Features
             var from = this.accountRepository.GetAccountById(fromAccountId);
             var to = this.accountRepository.GetAccountById(toAccountId);
 
-            var fromBalance = from.Balance - amount;
-            if (fromBalance < 0m)
+            //Some validation to ensure both accounts are found - ideally this would be ensured through the accountrepository?
+            if (from == null)
             {
-                throw new InvalidOperationException("Insufficient funds to make transfer");
+                throw new InvalidOperationException("Cannot find account with the id: " + fromAccountId.ToString());
+            }
+            if (to == null)
+            {
+                throw new InvalidOperationException("Cannot find account with the id: " + toAccountId.ToString());
             }
 
-            if (fromBalance < 500m)
-            {
-                this.notificationService.NotifyFundsLow(from.User.Email);
-            }
-
-            var paidIn = to.PaidIn + amount;
-            if (paidIn > Account.PayInLimit)
-            {
-                throw new InvalidOperationException("Account pay in limit reached");
-            }
-
-            if (Account.PayInLimit - paidIn < 500m)
-            {
-                this.notificationService.NotifyApproachingPayInLimit(to.User.Email);
-            }
-
-            from.Balance = from.Balance - amount;
-            from.Withdrawn = from.Withdrawn - amount;
-
-            to.Balance = to.Balance + amount;
-            to.PaidIn = to.PaidIn + amount;
+            Account.TransferMoney(from, to, amount);
 
             this.accountRepository.Update(from);
             this.accountRepository.Update(to);
+
+            //Push notification happens after update occurs - ideal order in case update fails
+            if (Account.PayInLimit - to.PaidIn < 500m)
+            {
+                this.notificationService.NotifyApproachingPayInLimit(to.User.Email);
+            }
+            if (from.Balance < 500m)
+            {
+                this.notificationService.NotifyFundsLow(from.User.Email);
+            }
         }
     }
 }

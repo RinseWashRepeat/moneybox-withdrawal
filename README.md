@@ -1,26 +1,11 @@
-# Moneybox Money Withdrawal
+# Matt Parker - Moneybox Money Withdrawal
 
-The solution contains a .NET core library (Moneybox.App) which is structured into the following 3 folders:
+Here's a few things I'd like to highlight;
 
-* Domain - this contains the domain models for a user and an account, and a notification service.
-* Features - this contains two operations, one which is implemented (transfer money) and another which isn't (withdraw money)
-* DataAccess - this contains a repository for retrieving and saving an account (and the nested user it belongs to)
+* As the task asked, I've devloped the model so that it's now functional and not just a container for variables.
+* I decided to create both a Deposit and a Withdraw function and have the Transfer function call those two. My reasoning being that in future the way Depositing and Withdrawing may change, but you shouldn't need to alter the Transfer function if that happens (assuming no new args are required)
+* I pushed notification calls to the end of functions - as I figured you'd only want to push notifications once we're sure transactions have taken place.
+* Speaking of transactions - I assumed that the AccountRepository.update() function would throw errors if needed and decided not to place it inside a 'try and catch'. However, I've placed some comments to show I gave this consideration.
+* If I had more time, I'd be sure to implement further unit tests. As it is, I decided to cover what I felt to be the main functions of the re-factored Account class.
 
-## The task
-
-The task is to implement a money withdrawal in the WithdrawMoney.Execute(...) method in the features folder. For consistency, the logic should be the same as the TransferMoney.Execute(...) method i.e. notifications for low funds and exceptions where the operation is not possible. 
-
-As part of this process however, you should look to refactor some of the code in the TransferMoney.Execute(...) method into the domain models, and make these models less susceptible to misuse. We're looking to make our domain models rich in behaviour and much more than just plain old objects, however we don't want any data persistance operations (i.e. data access repositories) to bleed into our domain. This should simplify the task of implementing WithdrawMoney.Execute(...).
-
-## Guidelines
-
-* You should spend no more than 1 hour on this task, although there is no time limit
-* You should fork or copy this repository into your own public repository (Github, BitBucket etc.) before you do your work
-* Your solution must compile and run first time
-* You should not alter the notification service or the the account repository interfaces
-* You may add unit/integration tests using a test framework (and/or mocking framework) of your choice
-* You may edit this README.md if you want to give more details around your work (e.g. why you have done something a particular way, or anything else you would look to do but didn't have time)
-
-Once you have completed your work, send us a link to your public repository.
-
-Good luck!
+Thanks for your time. :v:
