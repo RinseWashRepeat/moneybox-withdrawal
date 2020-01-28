@@ -32,6 +32,7 @@ namespace Moneybox.App.Features
 
             Account.TransferMoney(from, to, amount);
 
+            //Would this ideally be in a 'try and catch'?
             this.accountRepository.Update(from);
             this.accountRepository.Update(to);
 
